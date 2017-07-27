@@ -1,6 +1,7 @@
-import urllib3, requests
+
 
 def get_token(creds):
+    import urllib3, requests
     # This block gets your authorization token
     mltoken = 0
     headers = urllib3.util.make_headers(basic_auth='{}:{}'.format(creds["username"], creds["password"]))
