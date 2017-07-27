@@ -1,3 +1,5 @@
+import urllib3
+
 def get_token(creds):
     # This block gets your authorization token
     mltoken = 0
