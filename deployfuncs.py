@@ -1,4 +1,5 @@
-import urllib3, requests, json
+import urllib3, requests
+import json
 
 def get_token(creds):
     # This block gets your authorization token
