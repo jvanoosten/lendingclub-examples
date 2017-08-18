@@ -114,7 +114,7 @@ def deploy_model(creds, published_models_json, published_model_name_or_id) :
     response_online = requests.post(endpoint_deployments, json=payload_online, headers=header_online)
 
     scoring_url = json.loads(response_online.text).get('entity').get('scoring_href')
-    #print scoring_url
+    print scoring_url
     return scoring_url
 
 def retrain_and_deploy(creds,newdf, model_name) :
