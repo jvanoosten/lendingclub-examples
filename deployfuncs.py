@@ -107,9 +107,6 @@ def deploy_model(creds, published_models_json, published_model_name_or_id) :
 
     # get deployment endpoint
     # can pass either model name or model id .. just to make it a little easier
-    #[endpoint_deployments] = [x['entity']['deployments']['href'] for x in published_models_json['resources'] 
-    #                          if ((x['entity']['name'] == published_model_name_or_id) or (x['metadata']['guid'] == published_model_name_or_id))]
-    
     [endpoint_deployments] = [x['entity']['deployments']['url'] for x in published_models_json['resources'] 
                               if ((x['entity']['name'] == published_model_name_or_id) or (x['metadata']['guid'] == published_model_name_or_id))]
 
