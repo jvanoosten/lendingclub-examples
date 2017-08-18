@@ -48,8 +48,8 @@ def get_published_models(creds) :
     
     # now get published models
     response_get = requests.get(published_model_url, headers=header)
-    print response_get
-    print response_get.text
+    #print response_get
+    #print response_get.text
     
     published_models = {}
     #for i in range(0,len(json.loads(response.text)["resources"])) :
@@ -107,7 +107,9 @@ def deploy_model(creds, published_models_json, published_model_name_or_id) :
 
     # get deployment endpoint
     # can pass either model name or model id .. just to make it a little easier
-    [endpoint_deployments] = [x['entity']['deployments']['href'] for x in published_models_json['resources'] 
+    #[endpoint_deployments] = [x['entity']['deployments']['href'] for x in published_models_json['resources'] 
+    #                          if ((x['entity']['name'] == published_model_name_or_id) or (x['metadata']['guid'] == published_model_name_or_id))]
+    [endpoint_deployments] = [x['entity']['deployments']['url'] for x in published_models_json['resources'] 
                               if ((x['entity']['name'] == published_model_name_or_id) or (x['metadata']['guid'] == published_model_name_or_id))]
 
     payload_online = {"name": "Auto Deployment ", "description": "My Cool Deployment", "type": "online"}
