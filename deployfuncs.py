@@ -5,7 +5,8 @@ def get_token(creds):
     # This block gets your authorization token
     mltoken = 0
     headers = urllib3.util.make_headers(basic_auth='{}:{}'.format(creds["username"], creds["password"]))
-    url = '{}/v2/identity/token'.format(creds["url"])
+    #url = '{}/v2/identity/token'.format(creds["url"])
+    url = '{}/v3/identity/token'.format(creds["url"])
     response = requests.get(url, headers=headers)
     mltoken = json.loads(response.text).get('token')
     return mltoken
