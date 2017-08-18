@@ -52,12 +52,16 @@ def get_published_models(creds) :
     print response_get.text
     
     published_models = {}
-    for i in range(0,len(json.loads(response.text)["resources"])) :
+    #for i in range(0,len(json.loads(response.text)["resources"])) :
+    for i in range(0,len(json.loads(response_get.text)["resources"])) :
         print "## Published Model " + str(i) + " ## "
-        print json.loads(response.text)["resources"][i]["metadata"]["guid"]
-        print json.loads(response.text)["resources"][i]["entity"]["name"]
+        #print json.loads(response.text)["resources"][i]["metadata"]["guid"]
+        #print json.loads(response.text)["resources"][i]["entity"]["name"]
+        print json.loads(response_get.text)["resources"][i]["metadata"]["guid"]
+        print json.loads(response_get.text)["resources"][i]["entity"]["name"]
 
-    return json.loads(response.text)
+     #return json.loads(response.text)
+     return json.loads(response_get.text)
 
 #print get_published_models(creds)["resources"][0]["metadata"]["guid"]
 #print get_published_models(creds)["resources"][0]["entity"]["name"]
