@@ -35,7 +35,8 @@ def get_published_models(creds) :
     #V3
     # Use this to get published model url
     endpoint_instance = creds["url"] + "/v3/wml_instances/" + creds["instance_id"]
-    header = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    #header = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    header = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mltoken}
 
     response_get_instance = requests.get(endpoint_instance, headers=header)
     # print response_get_instance
@@ -66,7 +67,8 @@ def delete_model_by_id(creds, published_model_id) :
     # This block gets your authorization token
     mltoken = get_token(creds)
 
-    header_online = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    #header_online = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    header_online = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mltoken}
     published_models = '{}/v2/published_models/{}'.format(creds["url"],published_model_id)
     response = requests.delete(published_models, headers=header_online)
     #mltoken = json.loads(response.text).get('token')
@@ -96,7 +98,8 @@ def deploy_model(creds, published_models_json, published_model_name_or_id) :
     mltoken = get_token(creds)
     
      
-    header_online = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    #header_online = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    header_online = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mltoken}
 
     # get deployment endpoint
     # can pass either model name or model id .. just to make it a little easier
