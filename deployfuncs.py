@@ -25,29 +25,29 @@ def get_published_models(creds) :
     mltoken = get_token(creds)
 
     #v2
-    header_online = {'Content-Type': 'application/json', 'Authorization': mltoken}
-    published_models = '{}/v2/published_models'.format(creds["url"])
-    response = requests.get(published_models, headers=header_online)
+    #header_online = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    #published_models = '{}/v2/published_models'.format(creds["url"])
+    #response = requests.get(published_models, headers=header_online)
     
     #return json.loads(response.text)
 
     #V3
     # Use this to get published model url
-    #endpoint_instance = creds["url"] + "/v3/wml_instances/" + creds["instance_id"]
-    #header = {'Content-Type': 'application/json', 'Authorization': mltoken}
+    endpoint_instance = creds["url"] + "/v3/wml_instances/" + creds["instance_id"]
+    header = {'Content-Type': 'application/json', 'Authorization': mltoken}
 
-    #response_get_instance = requests.get(endpoint_instance, headers=header)
+    response_get_instance = requests.get(endpoint_instance, headers=header)
     # print response_get_instance
     # print response_get_instance.text
     
-    #published_model_url = json.loads(response_get_instance.text)["entity"]["published_models"]["url"]
-    #print published_model_url
+    published_model_url = json.loads(response_get_instance.text)["entity"]["published_models"]["url"]
+    print published_model_url
 
     
     # now get published models
-    #response_get = requests.get(published_model_url, headers=header)
-    # print response_get
-    # print response_get.text
+    response_get = requests.get(published_model_url, headers=header)
+    print response_get
+    print response_get.text
     
     published_models = {}
     for i in range(0,len(json.loads(response.text)["resources"])) :
