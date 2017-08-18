@@ -61,7 +61,7 @@ def get_published_models(creds) :
         print json.loads(response_get.text)["resources"][i]["entity"]["name"]
 
      #return json.loads(response.text)
-     return json.loads(response_get.text)
+    return json.loads(response_get.text)
 
 #print get_published_models(creds)["resources"][0]["metadata"]["guid"]
 #print get_published_models(creds)["resources"][0]["entity"]["name"]
