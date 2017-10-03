@@ -140,6 +140,7 @@ def score_example(creds, scoring_url, test_example_json) :
     print response_scoring.text
     return response_scoring.text
 
+# This only works in the notebook!
 def retrain_and_deploy(creds,newdf, model_name) :
     
     # Retrain model with new data
