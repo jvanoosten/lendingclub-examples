@@ -12,6 +12,7 @@
 
 import os, urllib3, requests, json
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
+import wml_deployfuncs as wmld
 
 
 creds = {
@@ -23,15 +24,6 @@ creds = {
 }
 
 
-def get_token(creds):
-    # This block gets your authorization token
-    mltoken = 0
-    headers = urllib3.util.make_headers(basic_auth='{}:{}'.format(creds["username"], creds["password"]))
-    #url = '{}/v2/identity/token'.format(creds["url"])
-    url = '{}/v3/identity/token'.format(creds["url"])
-    response = requests.get(url, headers=headers)
-    mltoken = json.loads(response.text).get('token')
-    return mltoken
 
 
 def score_example(creds, scoring_url, test_example_json) :
@@ -49,8 +41,13 @@ def score_example(creds, scoring_url, test_example_json) :
 
 
 # One time fetch for these tokens at the start of the app
-my_token = get_token(creds)
+my_token = wmld.get_token(creds)
+#published_models_json = wmld.get_published_models(creds)
+#rf_scoring_url = wmld.deploy_model(creds, published_models_json, "lc_rf_defaultprediction")
+#lr_scoring_url = wmld.deploy_model(creds, published_models_json, "lc_lr_defaultprediction")
 
+rf_scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/32b184b6-2208-4598-a813-58bbbf9d7921/deployments/d56a7a94-8c01-4d01-ba0d-5c481c8bd625/online'
+lr_scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/e8915a60-0f53-4d34-8a9f-eef64e2a5103/deployments/249ecd9e-c21c-4c9b-bbfc-cc1e7d3fcd61/online'
 
 app = Flask(__name__)
 
@@ -114,9 +111,9 @@ def callwlm(model_type,loan_amnt,annual_inc,dti,purpose):
     # There is a programmatic way to get the url, but this is easy
     scoring_url = ""
     if(model_type == "LR") :
-        scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/0c7052b8-fe40-49b1-8ce9-19a8ea964e99/deployments/da02c490-7aa6-44bb-854e-de85becea066/online'
+        scoring_url = lr_scoring_url
     else :
-        scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/5bfab4df-4343-4b11-a3f0-347730135a69/deployments/b64e9a5e-bfcf-45bc-8998-e9d915d50b4b/online'
+        scoring_url = rf_scoring_url
     
 
 

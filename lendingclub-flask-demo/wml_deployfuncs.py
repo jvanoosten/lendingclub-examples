@@ -2,6 +2,7 @@
 import urllib3, requests
 import json
 
+
 def get_token(creds):
     # This block gets your authorization token
     mltoken = 0
@@ -51,6 +52,7 @@ def get_published_models(creds) :
 
      #return json.loads(response.text)
     return json.loads(response_get.text)
+
 
 #print get_published_models(creds)["resources"][0]["metadata"]["guid"]
 #print get_published_models(creds)["resources"][0]["entity"]["name"]
@@ -106,6 +108,12 @@ def deploy_model(creds, published_models_json, published_model_name_or_id) :
     scoring_url = json.loads(response_online.text).get('entity').get('scoring_url')
     print scoring_url
     return scoring_url
+
+# Returns the URL and name of the deployments
+def get_deployed_models(creds) :
+    pm_json = get_published_models(creds)
+    # This block gets your authorization token
+    # This is a stub to implement this when you get some time
 
 def save_model_by_name(creds, model_name, model_in, training_data) : 
     from repository.mlrepositoryclient import MLRepositoryClient
