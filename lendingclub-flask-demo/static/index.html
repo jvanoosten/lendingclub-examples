@@ -1,0 +1,211 @@
+<html>
+<head>
+   <title>IBM Analytics1</title>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+   <!-- Optional theme -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+   <!-- Latest compiled and minified JavaScript -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+   <script src="static/bootstrap-slider.js"></script>
+   <link rel="stylesheet" href="static/bootstrap-slider.css">
+   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+   <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+   <script src="static/sprintf.js"></script>
+
+   <script src="static/lendingclub.js?v=1"></script>
+   <style type="text/css">
+   .jumbotron{
+      margin-top: 1px;
+      margin-left: 20px;
+      margin-right: 20px;
+      border-radius: 16px;
+   }
+   .dropdown {
+      text-align: left;
+   }
+   .row{
+      margin-left: 15px;
+   }
+   .row3{
+       margin-top: 30px;
+     height : 50px;
+   }
+   .row2{
+       margin-top: 30px;
+   }
+   .row4{
+       margin-top: 30px;
+     height : 75px;
+   }
+
+   #teamButton0 {
+      width : 100%;
+      border-radius: 6px;
+   }
+   #teamButton1 {
+      width : 100%;
+      border-radius: 6px;
+   }
+   #homeSlider3  {
+      margin-top: -5px;
+   }
+   #statButton {
+      color : black;
+      margin-top: 0px;
+      width: 100%;
+      text-align: left;
+      background: white;
+      border:none;
+      font-size: 20px;
+      border-radius: 6px;
+
+
+   }
+   .test {
+      font-size: 20px;
+      color : white;
+      margin-top: -0px;
+      width: 100%;
+      text-align: center;
+   }
+   .cust-lbl {
+      font-size: 20px;
+      width: 100%;
+      text-align: center;
+   }
+   #staticLabel1 {
+      width: 100%;
+   }
+
+   .label-success {
+     background-color: #000555;
+   }
+
+   </style>
+</head>
+<body>
+   <div style="margin:10px;">
+      <nav class="navbar navbar-inverse navbar-static-top">
+         <div class="container">
+            <a class="navbar-brand" href="/">IBM Analytics</a>
+            <ul class="nav navbar-nav">
+               <li class="active">
+                  <a href="/">Home</a>
+               </li>
+               <li>
+                  <a href="/learnmore.html">Learn More</a>
+               </li>
+            </ul>
+         </div>
+      </nav>
+
+
+      <div class="jumbotron">
+      <div class="container">
+         <h1>Lending Club Flask Demo</h1>
+         <p>Simple application to demonstrate Watson Machine Learning</p>
+         <!-- jt row 1-->
+         <div class="row">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+               <label id="staticLabel0"  class="label label-primary cust-lbl" >&nbspLoan Amount</label>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+              <label id="staticLabel1" class="label label-primary cust-lbl">&nbspAnnual Income</label>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+              <label id="staticLabel2" class="label label-primary cust-lbl">&nbspDTI Ratio</label>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 ">
+              <label id="staticLabel3" class="label label-primary cust-lbl">&nbspReason</label>
+            </div>         
+         </div><!--end row -->
+         <br>
+         <!-- jt row 2-->
+         <div class="row row3">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+               <input id="loanAmountSlider"
+                  type="text"
+                  data-provide="slider"
+                  data-slider-min="500"
+                  data-slider-max="50000"
+                  data-slider-step="1000"
+                  data-slider-value="5000"
+                  data-slider-tooltip="always">
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+               <input id="annualIncomeSlider"
+                  type="text"
+                  data-provide="slider"
+                  data-slider-min="10000"
+                  data-slider-max="120000"
+                  data-slider-step="10000"
+                  data-slider-value="50000"
+                  data-slider-tooltip="always">
+            </div>             
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+               <input id="dtiSlider"
+                  type="text"
+                  data-provide="slider"
+                  data-slider-min="5"
+                  data-slider-max="20"
+                  data-slider-step="5"
+                  data-slider-value="5"
+                  data-slider-tooltip="always">
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+               <div class="dropdown dropdown-select">
+                <button id="purposePulldown" type="button" class="btn btn-default dropdown-toggle"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Loan Purpose<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">debt_consolidation</a></li>
+                  <li><a href="#">small_business</a></li>
+                  <li><a href="#">major_purchase</a></li>
+                  <li><a href="#">home_improvement</a></li>
+                  <li><a href="#">credit_card</a></li>
+               </ul>
+              </div><!-- end drop down -->
+            </div><!-- end class -->
+         </div><!--end row -->
+     </div> <!-- end cont -->
+   </div><!--end jt -->
+      <!-- We can add text or buttons on the right and/or left of input elements. Use input-group-lg or input-group-sm for input sizing -->
+
+   <!-- row 7Output Results -->
+   <!-- <h3><label id="resultbox" class="label label-primary pull-right">Winner<span id="winnerString"><h1>Knicks</h1></span></label></h3> -->
+
+  <div class="row">
+      <div class="col-xs-6" "col-sm-6" "col-md-6" "col-lg-6">
+         <h3><label id="resultbox0" class="label label-success pull-right test">Logistic Regression Probability Default</label></h3>
+      </div>
+      <div class="col-xs-6" "col-sm-6" "col-md-6" "col-lg-6">
+         <h3><label id="resultbox1" class="label label-success pull-right test">Random Forest Probability Default</label></h3>
+      </div>
+   </div>
+
+   <!-- row 8 Output Results -->
+   <div class="row">
+      <div class="col-xs-6" "col-sm-6" "col-md-6" "col-lg-6">
+         <div id="mydonutchart_lr" style="height: 250px;"></div>
+      </div>
+      <div class="col-xs-6" "col-sm-6" "col-md-6" "col-lg-6">
+         <div id="mydonutchart_rf" style="height: 250px;"></div>
+      </div>
+   </div>
+
+
+   <!-- row 9 Text on bottom Results -->
+   <div class="row">
+      <div class="col-xs-12" "col-sm-12" "col-md-12" "col-lg-12">
+         <h3>Based on Lending Club evaluation, logistic regression is the more accurate model.  Multiple models shown to highlight the differences between the 2 algorithms.</h3>
+
+      </div>
+
+   </div>
+
+
+
+</div>
+</body>
+</html>
