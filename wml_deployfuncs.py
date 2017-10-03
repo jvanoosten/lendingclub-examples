@@ -1,3 +1,4 @@
+# %load deployfuncs.py
 import urllib3, requests
 import json
 
@@ -10,16 +11,6 @@ def get_token(creds):
     response = requests.get(url, headers=headers)
     mltoken = json.loads(response.text).get('token')
     return mltoken
-
-def save_model_by_name(creds, model_name, model_in, training_data) : 
-    from repository.mlrepositoryclient import MLRepositoryClient
-    from repository.mlrepositoryartifact import MLRepositoryArtifact
-    ml_repository_client = MLRepositoryClient(creds["url"])
-    ml_repository_client.authorize(creds["username"], creds["password"])
-    model_artifact = MLRepositoryArtifact(model_in, training_data=training_data, name=model_name)
-    saved_model = ml_repository_client.models.save(model_artifact)
-    
-    return saved_model.uid
 
 def get_published_models(creds) :
     # This block gets your authorization token
@@ -43,9 +34,8 @@ def get_published_models(creds) :
     # print response_get_instance.text
     
     published_model_url = json.loads(response_get_instance.text)["entity"]["published_models"]["url"]
-    print published_model_url
+    #print published_model_url
 
-    
     # now get published models
     response_get = requests.get(published_model_url, headers=header)
     #print response_get
@@ -53,12 +43,11 @@ def get_published_models(creds) :
     
     published_models = {}
     #for i in range(0,len(json.loads(response.text)["resources"])) :
+    print "## Published Model Summary ##"
     for i in range(0,len(json.loads(response_get.text)["resources"])) :
-        print "## Published Model " + str(i) + " ## "
+        print "# Published Model " + str(i) + " " + json.loads(response_get.text)["resources"][i]["metadata"]["guid"] + " " + json.loads(response_get.text)["resources"][i]["entity"]["name"]
         #print json.loads(response.text)["resources"][i]["metadata"]["guid"]
         #print json.loads(response.text)["resources"][i]["entity"]["name"]
-        print json.loads(response_get.text)["resources"][i]["metadata"]["guid"]
-        print json.loads(response_get.text)["resources"][i]["entity"]["name"]
 
      #return json.loads(response.text)
     return json.loads(response_get.text)
@@ -87,16 +76,16 @@ def delete_model_by_id(creds, published_model_id) :
 
 def delete_model_by_name(creds, model_name) :
     published_models_json = get_published_models(creds)
-    published_model_id =""
+    published_model_id_list = []
     for x in published_models_json['resources'] :
         if(x['entity']['name'] == model_name) :
-            published_model_id = x['metadata']['guid']
-                                    
-    if(published_model_id == "") :
-        print "No Model Found .. skipping delete ..."
-    else :
-        print "Deleting Model {0} {1}".format(model_name, published_model_id)
-        delete_model_by_id(creds, published_model_id)
+            published_model_id_list.append(x['metadata']['guid'])
+    for published_model_id in published_model_id_list :                                
+        if(published_model_id == "") :
+            print "No Model Found .. skipping delete ..."
+        else :
+            print "Deleting Model {0} {1}".format(model_name, published_model_id)
+            delete_model_by_id(creds, published_model_id)
 
 def deploy_model(creds, published_models_json, published_model_name_or_id) :
     mltoken = get_token(creds)
@@ -112,10 +101,36 @@ def deploy_model(creds, published_models_json, published_model_name_or_id) :
 
     payload_online = {"name": "Auto Deployment ", "description": "My Cool Deployment", "type": "online"}
     response_online = requests.post(endpoint_deployments, json=payload_online, headers=header_online)
-
-    scoring_url = json.loads(response_online.text).get('entity').get('scoring_href')
+    # print json.loads(response_online.text).get('entity')
+    
+    scoring_url = json.loads(response_online.text).get('entity').get('scoring_url')
     print scoring_url
     return scoring_url
+
+def save_model_by_name(creds, model_name, model_in, training_data) : 
+    from repository.mlrepositoryclient import MLRepositoryClient
+    from repository.mlrepositoryartifact import MLRepositoryArtifact
+    ml_repository_client = MLRepositoryClient(creds["url"])
+    ml_repository_client.authorize(creds["username"], creds["password"])
+    model_artifact = MLRepositoryArtifact(model_in, training_data=training_data, name=model_name)
+    
+    #Add a check to remove models with the same name.  WML allows this,but its bad practice IMO
+    delete_model_by_name(creds, model_name)
+    
+    saved_model = ml_repository_client.models.save(model_artifact)
+    
+    return saved_model.uid
+
+def score_example(creds, scoring_url, test_example_json) :
+
+    # Get the scoring endpoint from the WML service
+    mltoken = get_token(creds)
+    header_online = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mltoken}
+
+    # API call here
+    response_scoring = requests.post(scoring_url, data=test_example_json, headers=header_online)
+    print response_scoring.text
+    return response_scoring.text
 
 def retrain_and_deploy(creds,newdf, model_name) :
     
