@@ -38,16 +38,17 @@ def score_example(creds, scoring_url, test_example_json) :
     return response_scoring.text
 
 
-
-
 # One time fetch for these tokens at the start of the app
 my_token = wmld.get_token(creds)
 #published_models_json = wmld.get_published_models(creds)
 #rf_scoring_url = wmld.deploy_model(creds, published_models_json, "lc_rf_defaultprediction")
 #lr_scoring_url = wmld.deploy_model(creds, published_models_json, "lc_lr_defaultprediction")
 
-rf_scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/32b184b6-2208-4598-a813-58bbbf9d7921/deployments/d56a7a94-8c01-4d01-ba0d-5c481c8bd625/online'
-lr_scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/e8915a60-0f53-4d34-8a9f-eef64e2a5103/deployments/249ecd9e-c21c-4c9b-bbfc-cc1e7d3fcd61/online'
+rf_scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/241129a5-5442-42a1-a4de-db9aed1020ec/deployments/25f5ebe3-65d1-4006-a3f1-96b6a84f9aa1/online'
+lr_scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/d51854a2-84b2-41db-90f0-ac2419a944f2/published_models/37b01264-7f98-403e-9a73-5f2ea5f5596d/deployments/b0fb1f3c-b1ab-407c-abf6-8fd03f3dca6b/online'
+
+
+
 
 app = Flask(__name__)
 
