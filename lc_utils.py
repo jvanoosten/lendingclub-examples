@@ -49,9 +49,9 @@ import operator
 def nprint(mystring) :
     print("**{}** : {}".format(sys._getframe(1).f_code.co_name,mystring))
 
-def load_sample_data() :
-    DDIR='/data/work/osa/2018-04-lendingclub/lending-club-loan-data/lendingclub.com/'
-    loanstats_csv_files = glob.glob(DDIR + 'LoanStats*csv')
+def load_sample_data(location='/data/work/osa/2018-04-lendingclub/lending-club-loan-data/lendingclub.com/') :
+    #For lab force LoanStats_securev1_2018Q1.csv
+    loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv')  # 'LoanStats_secure*csv'
     loan_list = []
     for i in range(1) : #len(loanstats_csv_files)
         loan_list.append( pd.read_csv(loanstats_csv_files[i], index_col=None, header=1))
