@@ -31,18 +31,27 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-from keras.layers import Input, Dense
-from keras.models import Model
-from keras import regularizers
-from keras.models import load_model
 from collections import defaultdict
-
 import seaborn as sns
 from itertools import compress
 import itertools
 import operator
+import myenv as myenv
 
+print("CLASS_ENVIRONMENT = {}".format(myenv.CLASS_ENVIRONMENT))
+if(myenv.CLASS_ENVIRONMENT == 'dv-mac') :
+    from keras.layers import Input, Dense
+    from keras.models import Model
+    from keras import regularizers
+    from keras.models import load_model
+elif(myenv.CLASS_ENVIRONMENT == 'nimbix') :
+    import tensorflow as tf
+    from tensorflow.keras.layers import Input, Dense
+    from tensorflow.keras.models import Model
+    from tensorflow.keras import regularizers
+    from tensorflow.keras.models import load_model
+else :
+    print("ERROR loading myenv.py")
 
 
 # utility print function
@@ -51,14 +60,21 @@ def nprint(mystring) :
 
 def load_sample_data(location='/data/work/osa/2018-04-lendingclub/lending-club-loan-data/lendingclub.com/') :
     #For lab force LoanStats_securev1_2018Q1.csv
-    loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv')  # 'LoanStats_secure*csv'
+    loanstats_csv_files = None
+    if(myenv.CLASS_ENVIRONMENT == 'nimbix') :
+        location='/dl-labs/mldl-101/lab5-powerai-lc/'
+        nprint("Setting data location to {}".format(location))
+        loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv.gz')  # 'LoanStats_secure*csv'
+    else :
+        loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv')  # 'LoanStats_secure*csv'
     loan_list = []
     for i in range(1) : #len(loanstats_csv_files)
+        nprint("Loading {}".format(loanstats_csv_files[i]))
         loan_list.append( pd.read_csv(loanstats_csv_files[i], index_col=None, header=1))
         loan_df = pd.concat(loan_list,axis=0)
     return loan_df
 
-def quick_overview(loan_df) :
+def quick_overview_1d(loan_df) :
     nprint("There are " + str(len(loan_df)) + " observations in the dataset.")
     nprint("There are " + str(len(loan_df.columns)) + " variables in the dataset.")
 
@@ -73,6 +89,21 @@ def quick_overview(loan_df) :
     nprint("\n******************Dataset Descriptive Statistics (numerical columns only) *****************************\n")
     print(" running df.describe() ....")
     return loan_df.describe()
+
+def quick_overview_2d(loan_df, cols) :
+    nprint("There are " + str(len(loan_df)) + " observations in the dataset.")
+    nprint("There are " + str(len(loan_df.columns)) + " variables in the dataset.")
+
+    df = loan_df[cols]
+    corr_df = df.corr()
+    # plot the heatmap
+    sns.set_style(style = 'white')
+    # Add diverging colormap from red to blue
+    cmap = sns.diverging_palette(250, 10, as_cmap=True)
+    sns.heatmap(corr_df, cmap=cmap,
+        xticklabels=corr_df.columns,
+        yticklabels=corr_df.columns,vmin=-1.0,vmax=1.0)
+
 
 def create_loan_default(df) :
     # use a lamba function to encode multiple loan_status entries into a single 1/0 default variable
@@ -100,13 +131,20 @@ def create_loan_default(df) :
 
 def clean_lendingclub_data(df) :
     nprint(" Running a couple routines to clean the data ...")
-    df = drop_sparse_numeric_columns(df)
+    df = drop_sparse_numeric_columns(df, threshold=0.025)
+    nprint("Current DF shape = {}".format(df.shape))
     df = drop_columns(df)
+    nprint("Current DF shape = {}".format(df.shape))
     df = impute_columns(df)
+    nprint("Current DF shape = {}".format(df.shape))
     df = handle_employee_length(df)
+    nprint("Current DF shape = {}".format(df.shape))
     df = handle_revol_util(df)
+    nprint("Current DF shape = {}".format(df.shape))
     df = drop_rows(df)
+    nprint("Current DF shape = {}".format(df.shape))
     return df
+
 
 # This function is only useful for numeric columns .  Essentially, run a describe, and
 # remove any amount of columns that have values <= a sparsity threshold
@@ -171,7 +209,8 @@ def drop_columns(df) :
     
     # there is information here .. imputer later (maybe based on GRADE ?)
     drop_nums = ['num_accts_ever_120_pd','num_actv_bc_tl','num_actv_rev_tl','num_bc_sats','num_bc_tl','num_il_tl','num_op_rev_tl','num_rev_accts','num_rev_tl_bal_gt_0','num_sats','num_tl_120dpd_2m','num_tl_30dpd','num_tl_90g_dpd_24m','num_tl_op_past_12m']
-    
+    drop_joint = ['verification_status_joint']
+
     df = df.drop(columns=drop_list,axis=1).\
             drop(columns=drop_dates,axis=1).\
             drop(columns=drop_nlp_cand,axis=1).\
@@ -179,7 +218,8 @@ def drop_columns(df) :
             drop(columns=drop_settles,axis=1).\
             drop(columns=drop_msince,axis=1).\
             drop(columns=drop_total,axis=1).\
-            drop(columns=drop_nums,axis=1)
+            drop(columns=drop_nums,axis=1).\
+            drop(columns=drop_joint,axis=1)
 
     nprint("Final number of columns = {}".format(len(df.columns)))
 
@@ -451,7 +491,7 @@ class lendingclub_ml:
         # plot the 95% threshold, so we can read off count of principal components that matter
         plt.plot(bin, [.95]*n_components, '--')
         plt.plot(bin, [.75]*n_components, '--')
-        plt.plot(bin, [.67]*n_components, '--')
+        plt.plot(bin, [.50]*n_components, '--')
         #turn on grid to make graph reading easier
         plt.grid(True)
         #plt.rcParams.update({'font.size': 24})
@@ -582,7 +622,7 @@ class lendingclub_ml:
         btl_layer_str = 'dense_' + str(nl)
         nprint("Bottleneck Layer : {}".format(btl_layer_str))
 
-        ae_bottleneck_model = Model(input=self.ae_model.input, outputs=self.ae_model.get_layer(btl_layer_str).output)
+        ae_bottleneck_model = Model(inputs=self.ae_model.input, outputs=self.ae_model.get_layer(btl_layer_str).output)
         ae_bottleneck_model.summary()
 
         ae_encode = ae_bottleneck_model.predict(x=X_scaled)
