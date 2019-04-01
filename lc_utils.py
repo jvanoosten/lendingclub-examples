@@ -37,6 +37,7 @@ from itertools import compress
 import itertools
 import operator
 import myenv as myenv
+import json
 
 print("CLASS_ENVIRONMENT = {}".format(myenv.CLASS_ENVIRONMENT))
 if(myenv.CLASS_ENVIRONMENT == 'dv-mac') :
@@ -67,11 +68,17 @@ def load_sample_data(location='/data/work/osa/2018-04-lendingclub/lending-club-l
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv.gz')  # 'LoanStats_secure*csv'
     else :
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv')  # 'LoanStats_secure*csv'
+        loanstats_json_files = glob.glob(location + 'LoanStats_securev1_2016Q1*json')  # 'LoanStats_secure*csv'
+
+    # Step 1.  Process CSV + JSON Data and Join.  Then concatenate with other csv/json pairs if appropriate
     loan_list = []
     for i in range(1) : #len(loanstats_csv_files)
         nprint("Loading {}".format(loanstats_csv_files[i]))
         loan_list.append( pd.read_csv(loanstats_csv_files[i], index_col=None, header=1))
         loan_df = pd.concat(loan_list,axis=0)
+
+
+
     return loan_df
 
 def quick_overview_1d(loan_df) :
@@ -105,12 +112,12 @@ def quick_overview_2d(loan_df, cols) :
         yticklabels=corr_df.columns,vmin=-1.0,vmax=1.0)
 
 
-def create_loan_default(df) :
+def create_loan_default(df, loan_status='loan_status') :
     # use a lamba function to encode multiple loan_status entries into a single 1/0 default variable
     nprint("Unique values in loan_status")
-    print(df['loan_status'].value_counts())
+    print(df[loan_status].value_counts())
 
-    df['default'] = df['loan_status'].isin([
+    df['default'] = df[loan_status].isin([
         'Default',
         'Charged Off',
         'Late (31-120 days)',
@@ -123,7 +130,11 @@ def create_loan_default(df) :
     nprint("Dropping loan_status,total_rec_prncp,total_pymnt,total_pymnt_inv")
 
 
-    df = df.drop(['loan_status', 'total_rec_prncp','total_pymnt','total_pymnt_inv'], axis=1)
+    df = df.drop([loan_status, 'total_rec_prncp','total_pymnt','total_pymnt_inv'], axis=1)
+    # In the case where I scraped loan_status, also drop the original loan_status column too
+    if(loan_status != 'loan_status') :
+        df = df.drop(['loan_status'], axis=1)
+
     nprint("Unique values in default")
     print(df['default'].value_counts())
 
@@ -639,7 +650,7 @@ class lendingclub_ml:
         return df
 
 
-    def build_evaluate_dl_classifier(self, x_cols, regularization=0.001, epochs=3, batch_size = 16) :
+    def build_evaluate_dl_classifier(self, x_cols, regularization=0.001, epochs=3, batch_size = 16, layer1_nuerons = 10) :
 
 
         X = self.train_df[x_cols]
@@ -651,7 +662,7 @@ class lendingclub_ml:
         r = regularization
         
         input_layer = Input(shape=(X.shape[1], ), name="input_layer")
-        fc0 = Dense(10, activation='relu', kernel_regularizer=regularizers.l2(r), name="FC0")(input_layer)      
+        fc0 = Dense(layer1_nuerons, activation='relu', kernel_regularizer=regularizers.l2(r), name="FC0")(input_layer)      
         #fc1 = Dense(5, activation= 'sigmoid', kernel_regularizer=regularizers.l2(r), name="FC1")(layer[-1]) 
         output_layer = Dense(1, activation= 'sigmoid', kernel_regularizer=regularizers.l2(r), name="final_layer")(fc0) 
         
