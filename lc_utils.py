@@ -43,18 +43,18 @@ CLASS_ENVIRONMENT = "wsl-1231"
 
 print("CLASS_ENVIRONMENT = {}".format(CLASS_ENVIRONMENT))
 
-if(myenv.CLASS_ENVIRONMENT == 'dv-mac' or myenv.CLASS_ENVIRONMENT == 'wsl-1231') :
+if(CLASS_ENVIRONMENT == 'dv-mac' or myenv.CLASS_ENVIRONMENT == 'wsl-1231') :
     from keras.layers import Input, Dense
     from keras.models import Model
     from keras import regularizers
     from keras.models import load_model
-elif(myenv.CLASS_ENVIRONMENT == 'nimbix') :
+elif(CLASS_ENVIRONMENT == 'nimbix') :
     import tensorflow as tf
     from tensorflow.keras.layers import Input, Dense
     from tensorflow.keras.models import Model
     from tensorflow.keras import regularizers
     from tensorflow.keras.models import load_model
-elif(myenv.CLASS_ENVIRONMENT == 'acc') :
+elif(CLASS_ENVIRONMENT == 'acc') :
     import tensorflow as tf
     from tensorflow.python.keras.layers import Input, Dense
     from tensorflow.python.keras.models import Model
@@ -71,15 +71,15 @@ def nprint(mystring) :
 def load_sample_data(location='/data/work/osa/2018-04-lendingclub/lending-club-loan-data/lendingclub.com/') :
     #For lab force LoanStats_securev1_2018Q1.csv
     loanstats_csv_files = None
-    if(myenv.CLASS_ENVIRONMENT == 'nimbix') :
+    if(CLASS_ENVIRONMENT == 'nimbix') :
         location='/dl-labs/mldl-101/lab5-powerai-lc/'
         nprint("Setting data location to {}".format(location))
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv.gz')  # 'LoanStats_secure*csv'
-    elif(myenv.CLASS_ENVIRONMENT == 'acc') :
+    elif(CLASS_ENVIRONMENT == 'acc') :
         location='./'
         nprint("Setting data location to {}".format(location))
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv.gz')  # 'LoanStats_secure*csv'
-    elif(myenv.CLASS_ENVIRONMENT == 'wsl-1231') :
+    elif(CLASS_ENVIRONMENT == 'wsl-1231') :
         location='../datasets/'
         nprint("Setting data location to {}".format(location))
         loanstats_csv_files = glob.glob(location + 'LoanStats_securev1_2016Q1*csv.gz')  # 'LoanStats_secure*csv'
