@@ -39,12 +39,11 @@ from itertools import compress
 import itertools
 import operator
 
-CLASS_ENVIRONMENT = "wsl-1231"
-
-print("CLASS_ENVIRONMENT = {}".format(CLASS_ENVIRONMENT))
+#CLASS_ENVIRONMENT = ["wsl-1231" : "" , 
+#print("CLASS_ENVIRONMENT = {}".format(CLASS_ENVIRONMENT))
 
 def set_env(CLASS_ENVIRONMENT) :
-    if(CLASS_ENVIRONMENT == 'dv-mac' or myenv.CLASS_ENVIRONMENT == 'wsl-1231') :
+    if(CLASS_ENVIRONMENT == 'dv-mac' or CLASS_ENVIRONMENT == 'wsl-1231') :
         from keras.layers import Input, Dense
         from keras.models import Model
         from keras import regularizers
