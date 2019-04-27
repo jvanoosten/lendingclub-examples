@@ -489,9 +489,12 @@ class lendingclub_ml:
 
     def create_train_test(self, test_size=0.4) :
         # Train / Test split
-        nprint("Dropping 2 timestamp columns issue_d and earliest_cr_line")
-        self.df = self.df.drop(['issue_d','earliest_cr_line'],1)
-    
+        try :
+            nprint("Dropping 2 timestamp columns issue_d and earliest_cr_line")
+            self.df = self.df.drop(['issue_d','earliest_cr_line'],1)
+        except KeyError :
+            nprint(" 2 timestamp columns issue_d and earliest_cr_line unavailable to drop")
+        
         self.train_df, self.test_df = train_test_split(self.df, test_size=test_size, random_state=52)
         
         X_train = self.train_df.drop(['default','id'],1)
