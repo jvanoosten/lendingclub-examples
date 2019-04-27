@@ -360,7 +360,12 @@ def one_hot_encode_keep_cols(df) :
     df2 = pd.concat(tmp_dummies_df_list, axis=1)
     df2 = df2.drop(columns=cat_keep_list)
     df2 = df2.drop(columns=cat_drop_list)
-    df2['id'] = df['id']
+
+    try :
+        df2['id'] = df['id']
+    except KeyError
+        nprint("id not in dataframe, not copying over")
+      
     #.drop(cat_keep_list)
     return df2
 
@@ -454,8 +459,33 @@ class lendingclub_ml:
         self.Y_test = None 
         self.pca_model = None
         self.ae_model = None
-
+        self.x_cols = None
     
+
+    def get_xcols():
+        xcols = ['loan_amnt',
+                 'emp_length',
+                 'verification_status',
+                 'home_ownership',
+                 'annual_inc',
+                 'purpose',
+                 'inq_last_6mths',
+                 'open_acc',
+                 'pub_rec',
+                 'revol_util',
+                 'dti',
+                 'total_acc',
+                 'delinq_2yrs',
+                 'earliest_cr_line',
+                 'addr_state',
+                 'term',
+                 'default',
+                 'emp_listed',
+                 'empty_desc',
+                 'emp_na',
+                 'deling_ever',
+                 'time_history']
+
     def create_train_test(self, test_size=0.4) :
         # Train / Test split
         nprint("Dropping 2 timestamp columns issue_d and earliest_cr_line")
