@@ -363,7 +363,7 @@ def one_hot_encode_keep_cols(df) :
 
     try :
         df2['id'] = df['id']
-    except KeyError
+    except KeyError :
         nprint("id not in dataframe, not copying over")
       
     #.drop(cat_keep_list)
