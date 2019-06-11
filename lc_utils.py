@@ -516,7 +516,7 @@ class lendingclub_ml:
         nprint("Testing set size: " + str(self.test_df.shape))
         nprint("Train set loan_default:loan_paid ratio : " + str(self.train_df[self.train_df.default == 1].shape[0]) +'/' + str(self.train_df[self.train_df.default != 1].shape[0]))
         nprint("Test  set loan_default:loan_paid ratio : " + str(self.test_df[self.test_df.default == 1].shape[0])+'/' + str(self.test_df[self.test_df.default != 1].shape[0]))
-    
+        
     
     def build_pca_model(self,n_components=20) :
         # display sorted eigenvalues
@@ -524,8 +524,8 @@ class lendingclub_ml:
         # start w n_components principal components and see how much variance that gives me
         # create instance of PCA (constructor)
         pca = PCA(n_components=n_components)
-        # pca = PCA(copy=True, iterated_power='auto', n_components=n_components, random_state=None, svd_solver='auto', tol=0.0, whiten=False) 
         pca.fit(self.X_train_scaled)
+        
         nprint("Explained Variance : {}".format(pca.explained_variance_ratio_))
         self.pca_model = pca
         # Plot the values on a scree plot
@@ -701,19 +701,17 @@ class lendingclub_ml:
         Y = self.Y_train
         X_test = self.test_df[x_cols]
         Y_test = self.Y_test
-
-        #Compare DL vs Logistic ....
         r = regularization
+
+        # Instantiate Layers
         
         input_layer = Input(shape=(X.shape[1], ), name="input_layer")
         fc0 = Dense(10, activation='relu', kernel_regularizer=regularizers.l2(r), name="FC0")(input_layer)      
-        #fc1 = Dense(5, activation= 'sigmoid', kernel_regularizer=regularizers.l2(r), name="FC1")(layer[-1]) 
         output_layer = Dense(1, activation= 'sigmoid', kernel_regularizer=regularizers.l2(r), name="final_layer")(fc0) 
-        
-                
-        # construct and compile AE model
+          
+        # construct and compile FFNN model
         dl_classifier = Model(input_layer, output_layer)
-        dl_classifier.compile(optimizer='sgd', loss='mean_squared_error')
+        dl_classifier.compile(optimizer='adam', loss='binary_crossentropy')
           
         
         dl_classifier.summary()
