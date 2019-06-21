@@ -45,7 +45,7 @@ from abc import ABCMeta, abstractmethod
 #print("CLASS_ENVIRONMENT = {}".format(CLASS_ENVIRONMENT))
 # utility print function
 def nprint(mystring) :
-    print("**{}** : {}".format(sys._getframe(1).f_code.co_name,mystring))
+    print("**df_utils:{}** : {}".format(sys._getframe(1).f_code.co_name,mystring))
 
 
 
@@ -58,22 +58,25 @@ class MLDF :
     """
     def __init__(self,df):
         self.df = df
-        self.df_meta = pd.DataFrame(self.df.dtypes, columns=["dtype"])
+        self.df_meta = None
 
 
     def quick_overview_1d(self) :
-        
+        '''
+        Prints useful statistics about the dataframe ...
+        '''
+        self.df_meta = pd.DataFrame(self.df.dtypes, columns=["dtype"])
         nprint("There are " + str(len(self.df)) + " observations in the dataset.")
         nprint("There are " + str(len(self.df.columns)) + " variables in the dataset.")
     
         nprint("\n\n")
-        nprint("\n****************** Categorical vs Numerical  *****************************\n")
+        nprint("\n****************** Histogram of data types  *****************************\n")
         nprint("use df.dtypes ...")
         print(self.df_meta['dtype'].value_counts())
     
         # Cardinality Report
         nprint("\n\n")
-        nprint("\n****************** Cardinality Report (all types) *****************************\n")
+        nprint("\n****************** Generating Cardinality Report (all types) *****************************\n")
         #tmpdf = self.df.select_dtypes(include=['object'])
         # Cardinality report
         card_count = []
@@ -85,12 +88,26 @@ class MLDF :
         card_df = pd.DataFrame(card_count, index =card_idx, 
                                               columns =['cardinality']) 
         self.df_meta = self.df_meta.join(card_df, how="outer")
-        nprint("\n******************Dataset Descriptive Statistics (numerical columns only) *****************************\n")
-        print(" running df.describe() ....")
         
+        nprint("\n****************** Generating NaNs Report *****************************\n")
+        nan_df = pd.DataFrame(self.df.isna().sum(), columns=['nan_count'])
+        self.df_meta = self.df_meta.join(nan_df, how="outer")
+        # Add pct missing
+        self.df_meta['pct_missing'] = 100 * (self.df_meta['nan_count'] / len(self.df))
+
+
+
+        nprint("\n******************Generating Descriptive Statistics (numerical columns only) *****************************\n")
+        print(" running df.describe() ....")
+        desc_df = self.df.describe().transpose()
+        self.df_meta = self.df_meta.join(desc_df, how="outer")
+
+        self.df_meta = self.df_meta.sort_values(by=['dtype'],ascending=False)
 
         return self.df_meta
-
+    
+    def detailed_overview(df) :
+        print(df.info())
 
     def quick_overview_2d(self, cols) :
         nprint("There are " + str(len(self.df)) + " observations in the dataset.")
@@ -105,10 +122,6 @@ class MLDF :
         sns.heatmap(corr_df, cmap=cmap,
             xticklabels=corr_df.columns,
             yticklabels=corr_df.columns,vmin=-1.0,vmax=1.0)
-
-
-    def columns_with_nans(self) :
-        nprint(self.isna().sum())
 
     # def random_sample(self,pct ) :
     #     '''
