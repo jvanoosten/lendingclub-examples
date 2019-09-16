@@ -136,29 +136,6 @@ def quick_overview_2d(loan_df, cols) :
         yticklabels=corr_df.columns,vmin=-1.0,vmax=1.0)
 
 
-def create_loan_default(df) :
-    # use a lamba function to encode multiple loan_status entries into a single 1/0 default variable
-    nprint("Unique values in loan_status")
-    print(df['loan_status'].value_counts())
-
-    df['default'] = df['loan_status'].isin([
-        'Default',
-        'Charged Off',
-        'Late (31-120 days)',
-        'Late (16-30 days)',
-        'Does not meet the credit policy. Status:Charged Off'
-    ]).map(lambda x: int(x))
-    
-    # Now that we converted loan_status, drop it for later predictions using just default column
-    nprint("Dropping other values that are highly correlated with loan_status")
-    nprint("Dropping loan_status,total_rec_prncp,total_pymnt,total_pymnt_inv")
-
-
-    df = df.drop(['loan_status', 'total_rec_prncp','total_pymnt','total_pymnt_inv'], axis=1)
-    nprint("Unique values in default")
-    print(df['default'].value_counts())
-
-    return df
 
 def clean_lendingclub_data(df) :
     nprint(" Running a couple routines to clean the data ...")
